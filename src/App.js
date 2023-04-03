@@ -1,24 +1,52 @@
-import logo from './logo.svg';
-import './App.css';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import Table from 'react-bootstrap/Table';
+import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import Pagination from 'react-bootstrap/Pagination';
 
 function App() {
+  const[value,setValue] = useState([])
+  const[page,setPage] = useState(1)
+  useEffect(()=>{
+    axios.get(`https://api.punkapi.com/v2/beers?page=${page}&per_page=10`).then(res=>setValue(res.data))
+  },[page])
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+    <Table striped bordered hover>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>PH</th>
+          <th>SRM</th>
+          <th>TAGLINE</th>
+          <th>TARGET FG</th>
+          <th>TARGET OG</th>
+        </tr>
+      </thead>
+      <tbody>
+        {value.map(res => 
+        <tr>
+          <td>{res.id}</td>
+          <td>{res.name}</td>
+          <td>{res.ph}</td>
+          <td>{res.srm}</td>
+          <td>{res.tagline}</td>
+          <td>{res.target_fg}</td>
+          <td>{res.target_og}</td>
+        </tr>)}
+      </tbody>
+    </Table>
+    <Pagination>
+    <Pagination.Prev />
+    {value.map((number,index) => 
+    <Pagination.Item key={number.id} active={number === page} onClick={()=>setPage(index+1)}>
+      {index+1}
+    </Pagination.Item>)}
+    <Pagination.Next />
+      </Pagination>
+    </>
   );
 }
 
