@@ -3,12 +3,16 @@ import { useEffect, useState } from 'react';
 import Table from 'react-bootstrap/Table';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import Pagination from 'react-bootstrap/Pagination';
+import { useDispatch, useSelector } from 'react-redux';
+import { data } from './reducer';
 
 function App() {
-  const[value,setValue] = useState([])
+  const value = useSelector(state => state.persistedReducer.value)
+  console.log(value)
   const[page,setPage] = useState(1)
+  const dispatch = useDispatch()
   useEffect(()=>{
-    axios.get(`https://api.punkapi.com/v2/beers?page=${page}&per_page=10`).then(res=>setValue(res.data))
+    axios.get(`https://api.punkapi.com/v2/beers?page=${page}&per_page=10`).then(res=>dispatch(data(res.data)))
   },[page])
   
   return (
